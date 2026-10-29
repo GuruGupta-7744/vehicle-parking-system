@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vehicle Parking Management System</title>
+<style>
+:root{--bg:#f4f4f8;--card:#fff;--text:#1f1b2e;--muted:#6b6880;--line:#e6e4ef;--pri:#6d28d9;--pri-d:#5b21b6;--pri-l:#efe8fd;--ok:#16a34a;--ok-l:#dcfce7;--occ:#7c3aed;--occ-l:#ede9fe;--warn:#b45309;--warn-l:#fef3c7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14111f;--card:#1e1a2e;--text:#efedf7;--muted:#a09bb8;--line:#322d49;--pri:#a78bfa;--pri-d:#8b5cf6;--pri-l:#2c2250;--ok:#4ade80;--ok-l:#12331f;--occ:#a78bfa;--occ-l:#2c2250;--warn:#fbbf24;--warn-l:#3a2d0c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14111f;--card:#1e1a2e;--text:#efedf7;--muted:#a09bb8;--line:#322d49;--pri:#a78bfa;--pri-d:#8b5cf6;--pri-l:#2c2250;--ok:#4ade80;--ok-l:#12331f;--occ:#a78bfa;--occ-l:#2c2250;--warn:#fbbf24;--warn-l:#3a2d0c;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.app{display:flex;min-height:100vh}
+aside{width:250px;background:#2e1065;color:#ede9fe;padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;flex:none}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 16px;font-weight:700;line-height:1.2}
+.logo{width:40px;height:40px;border-radius:10px;background:#a78bfa;color:#2e1065;display:grid;place-items:center;font-weight:800;font-size:22px;flex:none}
+.nav{display:flex;gap:12px;align-items:center;width:100%;padding:11px 12px;border:0;border-radius:10px;background:none;color:#c9bdf0;cursor:pointer;text-align:left}
+.nav:hover{background:#4c1d95;color:#fff}.nav.on{background:#fff;color:#4c1d95;font-weight:600}
+.side-foot{margin-top:auto;font-size:12px;color:#b8a8e8;padding:8px}
+main{flex:1;min-width:0;padding:24px 28px 40px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.top h1{margin:0;font-size:24px}.top p{margin:0;color:var(--muted);font-size:13px}
+.sp{flex:1}
+.badge{background:var(--pri-l);color:var(--pri);padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.btn{background:var(--pri-d);color:#fff;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(1.1)}.btn.g{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.btn.s{padding:5px 12px;font-size:13px}
+.menu{display:none}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stat{display:flex;gap:14px;align-items:center}
+.ico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:var(--pri-l);color:var(--pri)}
+.stat b{display:block;font-size:26px;line-height:1.1}.stat span{color:var(--muted);font-size:13px}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+h2{font-size:17px;margin:0 0 14px}
+.act{list-style:none;margin:0;padding:0}.act li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.act li:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.act small{color:var(--muted);display:block}
+.bar{height:12px;border-radius:99px;background:var(--ok-l);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--occ);transition:width .4s}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:16px;font-size:13px;color:var(--muted)}
+.legend span{display:flex;gap:7px;align-items:center}.legend i{width:14px;height:14px;border-radius:4px}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.slot{border:2px solid transparent;border-radius:12px;padding:12px 6px;min-height:92px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.slot b{font-size:16px}.slot small{font-size:11px;font-weight:600;word-break:break-word}
+.slot.occ{background:var(--occ);color:#fff}.slot.free{background:var(--ok-l);color:var(--ok);border-color:var(--ok)}
+.slot.sel{box-shadow:0 0 0 3px var(--pri-l),0 0 0 5px var(--pri)}
+.info{margin-top:16px;padding:14px;border-radius:12px;background:var(--pri-l);min-height:60px}
+form.f{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.full{grid-column:1/-1}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:14px}
+th{color:var(--muted);font-size:12.5px;font-weight:600;background:var(--bg)}
+.pill{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.pill.p{background:var(--occ-l);color:var(--occ)}.pill.e{background:var(--ok-l);color:var(--ok)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tools input{flex:1;min-width:200px}.tools select{width:170px}
+.note{background:var(--warn-l);color:var(--warn);padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px}
+.mt{margin-top:16px}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(30px);background:#2e1065;color:#fff;padding:11px 20px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:50;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#login{position:fixed;inset:0;background:linear-gradient(135deg,#2e1065,#6d28d9);display:grid;place-items:center;z-index:40;padding:20px}
+#login .card{width:100%;max-width:400px;padding:28px}
+#login .hint{background:var(--pri-l);color:var(--text);padding:10px 12px;border-radius:10px;font-size:13px;margin:14px 0}
+.err{color:#dc2626;font-size:13px;min-height:18px}
+@media(max-width:980px){.grid4{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+@media(max-width:760px){
+aside{position:fixed;left:0;top:0;z-index:30;transform:translateX(-100%);transition:.25s;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+aside.open{transform:none}main{padding:16px 14px 40px}.menu{display:inline-flex}
+.slots{grid-template-columns:repeat(4,1fr);gap:8px}form.f{grid-template-columns:1fr}}
+@media(max-width:420px){.grid4{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="login">
+ <div class="card">
+  <div class="brand" style="color:var(--text)"><div class="logo">P</div><div>Vehicle Parking<br>Management System</div></div>
+  <span class="badge">Parking Management System</span>
+  <div class="hint">Welcome to the Vehicle Parking Management System. Sign in to manage parking operations.</div>
+  <label for="u">Username</label><input id="u" value="admin" autocomplete="off">
+  <label for="pw" class="mt">Password</label><input id="pw" type="password" autocomplete="off">
+  <div class="err" id="err"></div>
+  <button class="btn" style="width:100%" id="go">Sign in</button>
+ </div>
+</div>
+
+<div class="app">
+<aside id="side">
+ <div class="brand"><div class="logo">P</div><div>Parking<br>Manager</div></div>
+ <div id="nav"></div>
+ <button class="nav" id="theme"></button>
+ <div class="side-foot">Vehicle Parking<br>Management System</div>
+</aside>
+<main>
+ <div class="top">
+  <button class="btn g menu" id="burger" aria-label="Open menu">☰</button>
+  <div><h1 id="ttl"></h1><p id="sub"></p></div><div class="sp"></div>
+  <span class="badge">Parking Management System</span>
+  <button class="btn g s" id="reset">Reset data</button>
+ </div>
+ <section id="view"></section>
+</main>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+const RATE=20, CLOCK=15*60+30; // displayed clock 15:30
+const P={grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+car:'<path d="M5 17h14M3 13l2-6h14l2 6v4H3zM7 17v2M17 17v2"/><circle cx="7.5" cy="13.5" r=".6"/><circle cx="16.5" cy="13.5" r=".6"/>',
+in:'<path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>',
+out:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>',
+list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+rs:'<path d="M6 4h12M6 9h12M9 4c6 0 6 9 0 9l7 7"/>',
+free:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>'};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24">${P[n]}</svg>`;
+const T=(h,m)=>h*60+m;
+const SEED=[
+["MH04 AB 1234","Rahul Sharma","Car","P01",T(8,15),null],["MH02 CD 5678","Priya Nair","Car","P02",T(8,40),null],
+["MH05 EF 9012","Amit Patil","Bike","P04",T(9,5),null],["MH03 GH 3456","Sneha Kulkarni","Scooter","P05",T(9,30),null],
+["MH01 JK 7788","Vikram Desai","Car","P07",T(10,10),null],["MH04 LM 2290","Anjali Mehta","Scooter","P09",T(10,45),null],
+["MH43 NP 4411","Rohan Joshi","Bike","P10",T(11,0),null],["MH12 QR 6623","Kavita Rao","Car","P12",T(11,25),null],
+["MH04 ST 8145","Imran Shaikh","Car","P14",T(12,5),null],["MH02 UV 3370","Neha Singh","Other","P15",T(12,40),null],
+["MH03 WX 5092","Suresh Iyer","Bike","P17",T(13,15),null],["MH04 YZ 7716","Deepa Menon","Car","P19",T(14,0),null],
+["MH05 AA 1021","Manoj Gupta","Car","P03",T(7,30),T(9,45)],["MH04 BB 2034","Pooja Shah","Scooter","P06",T(8,0),T(10,15)],
+["MH02 CC 3047","Arjun Reddy","Bike","P08",T(8,30),T(11,0)],["MH01 DD 4058","Farah Khan","Car","P11",T(9,15),T(12,30)],
+["MH03 EE 5069","Sanjay Pawar","Other","P13",T(10,0),T(13,20)],["MH12 FF 6070","Meera Kapoor","Car","P16",T(10,30),T(13,0)]];
+const ACT0=[["Deepa Menon’s car parked in P19","14:00","p"],["Meera Kapoor exited P16 · ₹60","13:00","e"],["Sanjay Pawar exited P13 · ₹80","13:20","e"],["Suresh Iyer’s bike parked in P17","13:15","p"],["Farah Khan exited P11 · ₹80","12:30","e"]];
+let S;
+function init(){S={rec:SEED.map((r,i)=>({id:i+1,veh:r[0],own:r[1],type:r[2],slot:r[3],in:r[4],out:r[5],fee:r[5]?fee(r[5]-r[4]):null})),rev:1850,act:ACT0.map(a=>({t:a[0],m:a[1],k:a[2]})),sel:null,q:'',f:'All'}}
+const fee=d=>Math.max(1,Math.ceil(d/60))*RATE;
+const fm=m=>m==null?'—':String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const dur=d=>Math.floor(d/60)+'h '+String(d%60).padStart(2,'0')+'m';
+const parked=()=>S.rec.filter(r=>!r.out);
+const slotOf=n=>parked().find(r=>r.slot===n);
+const sn=i=>'P'+String(i).padStart(2,'0');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2600)}
+const PAGES={dashboard:['Dashboard','Live overview of the parking lot','grid'],slots:['Parking Slots','20 slots, P01 to P20','car'],entry:['Vehicle Entry','Register an arriving vehicle','in'],exit:['Vehicle Exit','Check out vehicles and calculate fees','out'],records:['Vehicle Records','Search and filter all sample records','list']};
+let page='dashboard';
+function nav(){document.getElementById('nav').innerHTML=Object.entries(PAGES).map(([k,v])=>`<button class="nav ${k===page?'on':''}" data-p="${k}">${ic(v[2])}${v[0]}</button>`).join('');
+ document.getElementById('theme').innerHTML=ic('sun')+'Toggle theme'}
+function go(p){page=p;document.getElementById('side').classList.remove('open');render();scrollTo(0,0)}
+function stats(){const o=parked().length;return{o,a:20-o}}
+function row(r){return `<tr><td><b>${esc(r.veh)}</b></td><td>${esc(r.own)}</td><td>${r.type}</td><td>${r.slot}</td><td>${fm(r.in)}</td><td>${fm(r.out)}</td><td><span class="pill ${r.out?'e':'p'}">${r.out?'Exited':'Parked'}</span></td><td>${r.fee!=null?'₹'+r.fee:'—'}</td></tr>`}
+function dash(){const{o,a}=stats();
+ const c=(i,n,l)=>`<div class="card stat"><div class="ico">${ic(i)}</div><div><b>${n}</b><span>${l}</span></div></div>`;
+ return `<div class="grid4">${c('grid',20,'Total slots')}${c('car',o,'Occupied slots')}${c('free',a,'Available slots')}${c('rs','₹'+S.rev.toLocaleString('en-IN'),'Today’s revenue')}</div>
+ <div class="two"><div class="card"><h2>Recent activity</h2><ul class="act">${S.act.slice(0,7).map(x=>`<li><span class="dot" style="background:${x.k==='p'?'var(--occ)':'var(--ok)'}"></span><div>${esc(x.t)}<small>${x.m}</small></div></li>`).join('')}</ul></div>
+ <div class="card"><h2>Lot occupancy</h2><b style="font-size:32px">${Math.round(o/20*100)}%</b><div class="bar"><i style="width:${o/20*100}%"></i></div><p style="color:var(--muted);margin:0 0 16px">${o} of 20 slots in use. Rate: ₹${RATE} per hour (part hours rounded up).</p>
+ <button class="btn" data-p="entry">Register a vehicle</button> <button class="btn g" data-p="slots">View slot map</button></div></div>`}
+function slotsV(){let g='';for(let i=1;i<=20;i++){const n=sn(i),r=slotOf(n);g+=`<div class="slot ${r?'occ':'free'} ${S.sel===n?'sel':''}" data-s="${n}" tabindex="0" role="button"><b>${n}</b><small>${r?esc(r.veh):'Available'}</small></div>`}
+ const r=S.sel&&slotOf(S.sel);let info='Select a slot to see its details.';
+ if(S.sel)info=r?`<b>${S.sel}</b> is occupied by <b>${esc(r.veh)}</b> (${r.type}), owner ${esc(r.own)}, entered at ${fm(r.in)}. Duration so far: ${dur(CLOCK-r.in)}, estimated fee ₹${fee(CLOCK-r.in)}. <br><button class="btn s mt" data-x="${r.id}">Check out this vehicle</button>`:`<b>${S.sel}</b> is available. <br><button class="btn s mt" data-e="${S.sel}">Park a vehicle here</button>`;
+ return `<div class="card"><div class="legend"><span><i style="background:var(--occ)"></i>Occupied</span><span><i style="background:var(--ok-l);border:2px solid var(--ok)"></i>Available</span><span>Displayed time: ${fm(CLOCK)}</span></div><div class="slots">${g}</div><div class="info">${info}</div></div>`}
+function entryV(){const free=Array.from({length:20},(_,i)=>sn(i+1)).filter(n=>!slotOf(n));
+ return `<div class="note">Note: Changes are temporary and will be cleared when the page is refreshed.</div>
+ <div class="card"><h2>New vehicle entry</h2><form class="f" id="ef">
+ <div><label for="v">Registration number</label><input id="v" required placeholder="MH04 XY 1234" pattern="[A-Za-z0-9 \\-]{6,13}"></div>
+ <div><label for="t">Vehicle type</label><select id="t"><option>Car</option><option>Bike</option><option>Scooter</option><option>Other</option></select></div>
+ <div><label for="o">Owner name</label><input id="o" required placeholder="Full name"></div>
+ <div><label for="tm">Entry time</label><input id="tm" type="time" required value="${fm(CLOCK)}"></div>
+ <div class="full"><label for="sl">Slot</label><select id="sl"><option value="">Auto-assign first free slot</option>${free.map(n=>`<option ${S.pre===n?'selected':''}>${n}</option>`).join('')}</select></div>
+ <div class="full"><button class="btn" ${free.length?'':'disabled'}>Register entry</button></div></form></div>
+ <div class="card mt"><h2>Currently parked (${parked().length})</h2><div class="tw"><table><tr><th>Vehicle</th><th>Owner</th><th>Type</th><th>Slot</th><th>Entry</th><th>Exit</th><th>Status</th><th>Fee</th></tr>${parked().map(row).join('')}</table></div></div>`}
+function exitV(){const ex=S.rec.filter(r=>r.out).sort((a,b)=>b.out-a.out);
+ return `<div class="note">Rate: ₹${RATE} per hour, part hours rounded up. Displayed time is fixed at ${fm(CLOCK)}.</div>
+ <div class="card"><h2>Check out a parked vehicle</h2><div class="tw"><table><tr><th>Vehicle</th><th>Slot</th><th>Entry</th><th>Duration</th><th>Fee now</th><th></th></tr>${parked().map(r=>`<tr><td><b>${esc(r.veh)}</b></td><td>${r.slot}</td><td>${fm(r.in)}</td><td>${dur(CLOCK-r.in)}</td><td>₹${fee(CLOCK-r.in)}</td><td><button class="btn s" data-x="${r.id}">Exit</button></td></tr>`).join('')||'<tr><td colspan="6">No vehicles are parked.</td></tr>'}</table></div></div>
+ <div class="card mt"><h2>Exit records</h2><div class="tw"><table><tr><th>Vehicle</th><th>Owner</th><th>Slot</th><th>Entry</th><th>Exit</th><th>Duration</th><th>Fee</th></tr>${ex.map(r=>`<tr><td><b>${esc(r.veh)}</b></td><td>${esc(r.own)}</td><td>${r.slot}</td><td>${fm(r.in)}</td><td>${fm(r.out)}</td><td>${dur(r.out-r.in)}</td><td>₹${r.fee}</td></tr>`).join('')}</table></div></div>`}
+function recV(){return `<div class="card"><div class="tools"><input id="q" type="search" placeholder="Search vehicle number or owner" value="${esc(S.q)}" aria-label="Search"><select id="fl" aria-label="Status filter">${['All','Parked','Exited'].map(x=>`<option ${S.f===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="tw"><table><thead><tr><th>Vehicle</th><th>Owner</th><th>Type</th><th>Slot</th><th>Entry</th><th>Exit</th><th>Status</th><th>Fee</th></tr></thead><tbody id="rb"></tbody></table></div><p id="cnt" style="color:var(--muted);margin:10px 0 0;font-size:13px"></p></div>`}
+function fillRec(){const q=S.q.toLowerCase();const l=S.rec.filter(r=>(S.f==='All'||(S.f==='Parked')===!r.out)&&(r.veh+' '+r.own).toLowerCase().includes(q));
+ document.getElementById('rb').innerHTML=l.map(row).join('')||'<tr><td colspan="8">No records match. Try a different search or filter.</td></tr>';
+ document.getElementById('cnt').textContent=`Showing ${l.length} of ${S.rec.length} records`}
+function render(){nav();const[t,s]=PAGES[page];document.getElementById('ttl').textContent=t;document.getElementById('sub').textContent=s;
+ document.getElementById('view').innerHTML={dashboard:dash,slots:slotsV,entry:entryV,exit:exitV,records:recV}[page]();if(page==='records')fillRec()}
+function doExit(id){const r=S.rec.find(x=>x.id==id);if(!r||r.out)return;r.out=CLOCK;r.fee=fee(CLOCK-r.in);S.rev+=r.fee;
+ S.act.unshift({t:`${r.own} exited ${r.slot} · ₹${r.fee}`,m:fm(CLOCK),k:'e'});toast(`${r.veh} checked out. Fee ₹${r.fee}`);render()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-p],[data-s],[data-x],[data-e],#reset,#theme,#burger');if(!b)return;
+ if(b.dataset.p)go(b.dataset.p);else if(b.dataset.s){S.sel=b.dataset.s;render()}
+ else if(b.dataset.x)doExit(b.dataset.x);else if(b.dataset.e){S.pre=b.dataset.e;go('entry')}
+ else if(b.id==='reset'){init();render();toast('Data reset')}
+ else if(b.id==='theme'){const d=document.documentElement,dk=getComputedStyle(d).colorScheme==='dark';d.dataset.theme=dk?'light':'dark'}
+ else if(b.id==='burger')document.getElementById('side').classList.toggle('open')});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.s){e.preventDefault();S.sel=e.target.dataset.s;render()}});
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;fillRec()}});
+document.addEventListener('change',e=>{if(e.target.id==='fl'){S.f=e.target.value;fillRec()}});
+document.addEventListener('submit',e=>{if(e.target.id!=='ef')return;e.preventDefault();
+ const v=document.getElementById('v').value.trim().toUpperCase().replace(/\s+/g,' ');
+ if(parked().some(r=>r.veh===v)){toast('That vehicle is already parked.');return}
+ let sl=document.getElementById('sl').value;if(!sl)sl=Array.from({length:20},(_,i)=>sn(i+1)).find(n=>!slotOf(n));
+ const [h,m]=document.getElementById('tm').value.split(':').map(Number),t=document.getElementById('t').value,o=document.getElementById('o').value.trim();
+ S.rec.push({id:Date.now(),veh:v,own:o,type:t,slot:sl,in:T(h,m),out:null,fee:null});S.act.unshift({t:`${o}’s ${t.toLowerCase()} parked in ${sl}`,m:fm(T(h,m)),k:'p'});
+ S.pre=null;S.sel=sl;toast(`${v} parked in ${sl}`);go('dashboard')});
+function login(){const ok=document.getElementById('u').value==='admin'&&document.getElementById('pw').value==='parking123';
+ if(ok)document.getElementById('login').style.display='none';else document.getElementById('err').textContent='Incorrect username or password. Please try again.'}
+document.getElementById('go').onclick=login;
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+document.getElementById('pw').value='parking123';
+init();render();
+</script>
+</body>
+</html>
